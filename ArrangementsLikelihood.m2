@@ -22,6 +22,41 @@ twoMatrices = L -> (
     B := G^{(#L)..(numrows G)-1};
     (A,B))
 
+newMatrix = L -> (
+    if #L != 0 then R := ring L#0;
+    J := transpose jacobian matrix {L}; 
+    D := diagonalMatrix L;
+    gg := gens R;
+    n := numgens R;
+    Q := baseRing(R);
+    S := Q[join(gg, s_1..s_(#L)), Degrees => toList(join(n:{1,0}, #L:{0,1}))];
+    Q2 := sub(D|J, S);
+    ro := matrix {{s_1..s_(#L), n:0}};
+    submatrix'(Q2||ro, , {0}))
+
+detIdeal = A -> (
+    Q := newMatrix A;
+    m := numrows Q - 1; 
+    n := numcols Q - (m-1);
+    -- get the degrees of the f_i (from last col) and make the linear form
+    esses := drop(gens ring Q, n);
+    degs := first \ degree \ A;
+    linform := matrix {degs} * transpose matrix {esses};  -- form linear form
+    minors_(m+1) Q + ideal linform)
+
+newMatrix' = L -> (
+    if #L != 0 then R := ring L#0;
+    J := transpose jacobian matrix {L}; 
+    D := diagonalMatrix L;
+    gg := gens R;
+    n := numgens R;
+    Q := baseRing(R);
+    S := Q[join(gg, s_1..s_(#L)), Degrees => toList(join(n:{1,0}, #L:{0,1}))];
+    Q2 := sub(D|J, S);
+    ro := matrix {{s_1..s_(#L), n:0}};
+    Q2||ro)
+
+
 jacobianModule = L -> image (twoMatrices L)#1
 
 logDerModule = L -> image (twoMatrices L)#0
@@ -57,3 +92,10 @@ isTame = L -> (     -- naive implementation;
     PDs = OmegaPs / (OmegaP -> pdim OmegaP);
     all(PDs, 1..length(PDs), (d,p) -> d <= p)
 )
+
+
+-- Todo: Often one wants to call both and compare the ideals then the
+--       results of the two ideal functions lie in different rings.
+
+
+
