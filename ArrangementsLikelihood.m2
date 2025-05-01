@@ -96,6 +96,3 @@ isTame = L -> (     -- naive implementation;
 
 -- Todo: Often one wants to call both and compare the ideals then the
 --       results of the two ideal functions lie in different rings.
-
-
-
